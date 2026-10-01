@@ -40,7 +40,7 @@ export type SiteSettings = {
 export const siteConfig: SiteSettings = {
   name: 'FUAD',
   domain: 'FUAD.care',
-  url: 'https://fuad.care',
+  url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://fuad.care').replace(/\/$/, ''),
   tagline: 'A safe space to understand yourself, heal, and grow.',
   description:
     'FUAD offers thoughtful counselling and emotional wellbeing support in a calm, non-judgmental space where you can pause, reflect, and be heard.',

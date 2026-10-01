@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { getSupabaseServerClient, getSupabasePublicClient } from '@/lib/supabase/server'
 
 export type Service = {
   slug: string
@@ -336,4 +336,26 @@ export async function getService(slug: string): Promise<Service | undefined> {
 
   if (error || !data) return services.find((s) => s.slug === slug && s.published)
   return rowToService(data)
+}
+
+/**
+ * Slugs only, via a cookie-free client — used by generateStaticParams() and
+ * the sitemap, which run without a request (cookies() would throw there).
+ */
+export async function getPublishedServiceSlugs(): Promise<string[]> {
+  const fallback = services.filter((x) => x.published).map((x) => x.slug)
+  const supabase = getSupabasePublicClient()
+  if (!supabase) return fallback
+
+  try {
+    const { data, error } = await supabase
+      .from('services')
+      .select('slug')
+      .eq('published', true)
+      .order('sort_order', { ascending: true })
+    if (error || !data) return fallback
+    return data.map((r: { slug: string }) => r.slug)
+  } catch {
+    return fallback
+  }
 }

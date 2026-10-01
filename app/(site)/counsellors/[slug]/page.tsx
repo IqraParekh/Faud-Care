@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import {
   getCounsellor,
-  getPublishedCounsellors,
+  getPublishedCounsellorSlugs,
   TO_BE_CONFIRMED,
 } from '@/lib/content/counsellors'
 import { PageHero } from '@/components/page-hero'
@@ -14,8 +14,8 @@ import { whatsappMessages } from '@/lib/whatsapp'
 import { BreadcrumbSchema } from '@/components/seo-schema'
 
 export async function generateStaticParams() {
-  const counsellors = await getPublishedCounsellors()
-  return counsellors.map((c) => ({ slug: c.slug }))
+  const slugs = await getPublishedCounsellorSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({

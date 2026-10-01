@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { getSupabaseServerClient, getSupabasePublicClient } from '@/lib/supabase/server'
 
 export type Counsellor = {
   slug: string
@@ -166,3 +166,25 @@ export async function getCounsellor(slug: string): Promise<Counsellor | undefine
 }
 
 export const TO_BE_CONFIRMED = TBC
+
+/**
+ * Slugs only, via a cookie-free client — used by generateStaticParams() and
+ * the sitemap, which run without a request (cookies() would throw there).
+ */
+export async function getPublishedCounsellorSlugs(): Promise<string[]> {
+  const fallback = counsellors.filter((x) => x.published).map((x) => x.slug)
+  const supabase = getSupabasePublicClient()
+  if (!supabase) return fallback
+
+  try {
+    const { data, error } = await supabase
+      .from('counsellors')
+      .select('slug')
+      .eq('published', true)
+      .order('sort_order', { ascending: true })
+    if (error || !data) return fallback
+    return data.map((r: { slug: string }) => r.slug)
+  } catch {
+    return fallback
+  }
+}

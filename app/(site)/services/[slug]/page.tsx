@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ArrowRight, Check } from 'lucide-react'
 import {
   getPublishedServices,
+  getPublishedServiceSlugs,
   getService,
   type Service,
 } from '@/lib/content/services'
@@ -21,8 +22,8 @@ import { whatsappMessages } from '@/lib/whatsapp'
 import { BreadcrumbSchema, FaqSchema } from '@/components/seo-schema'
 
 export async function generateStaticParams() {
-  const services = await getPublishedServices()
-  return services.map((s) => ({ slug: s.slug }))
+  const slugs = await getPublishedServiceSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({
