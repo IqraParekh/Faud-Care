@@ -1,0 +1,90 @@
+/**
+ * Central site configuration — client-safe (no server-only imports), so
+ * Client Components (site-header, site-footer, booking/whatsapp buttons)
+ * can import it directly.
+ *
+ * `siteConfig` is the static fallback used until Supabase is configured, or
+ * if a request to `site_settings` fails for any reason — the public site
+ * must never break because of a settings read. The live, admin-editable
+ * values come from `getSiteSettings()` in lib/site-settings.server.ts
+ * (Server Components only) and flow down via SiteSettingsProvider.
+ */
+
+export type SiteSettings = {
+  name: string
+  domain: string
+  url: string
+  tagline: string
+  description: string
+  booking: {
+    enabled: boolean
+    globalUrl: string
+    buttonLabel: string
+  }
+  whatsapp: {
+    number: string
+    displayNumber: string
+  }
+  contact: {
+    email: string
+    location: string
+    hours: string
+  }
+  social: {
+    instagram: string
+    facebook: string
+    linkedin: string
+  }
+}
+
+export const siteConfig: SiteSettings = {
+  name: 'FUAD',
+  domain: 'FUAD.care',
+  url: 'https://fuad.care',
+  tagline: 'A safe space to understand yourself, heal, and grow.',
+  description:
+    'FUAD offers thoughtful counselling and emotional wellbeing support in a calm, non-judgmental space where you can pause, reflect, and be heard.',
+
+  // Booking (Google Calendar). Empty string means "not configured yet".
+  booking: {
+    enabled: true,
+    globalUrl: '',
+    buttonLabel: 'Book a Session',
+  },
+
+  // WhatsApp — main secondary conversion channel.
+  whatsapp: {
+    number: '923155553823',
+    displayNumber: '+92 315 555 3823',
+  },
+
+  contact: {
+    email: 'hello@fuad.care',
+    location: '', // e.g. 'Lahore, Pakistan' — leave empty to hide
+    hours: '', // e.g. 'Mon–Sat, 10am–8pm' — leave empty to hide
+  },
+
+  social: {
+    instagram: '',
+    facebook: '',
+    linkedin: '',
+  },
+}
+
+export const mainNav = [
+  { label: 'About', href: '/about' },
+  { label: 'Services', href: '/services' },
+  { label: 'Counsellors', href: '/counsellors' },
+  { label: 'Testimonials', href: '/testimonials' },
+  { label: 'FAQs', href: '/faqs' },
+] as const
+
+export const footerNav = [
+  { label: 'About', href: '/about' },
+  { label: 'Services', href: '/services' },
+  { label: 'Counsellors', href: '/counsellors' },
+  { label: 'Testimonials', href: '/testimonials' },
+  { label: 'FAQs', href: '/faqs' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
+] as const
