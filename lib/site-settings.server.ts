@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { getSupabasePublicClient } from '@/lib/supabase/server'
 import { siteConfig, type SiteSettings } from './site-config'
 
 /**
@@ -57,7 +57,7 @@ function rowToSettings(row: SiteSettingsRow): SiteSettings {
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
-  const supabase = await getSupabaseServerClient()
+  const supabase = getSupabasePublicClient()
   if (!supabase) return siteConfig
 
   const { data, error } = await supabase

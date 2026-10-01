@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { getSupabasePublicClient } from '@/lib/supabase/server'
 
 export type Faq = {
   id: string
@@ -83,7 +83,7 @@ export const faqs: Faq[] = [
 
 /** Reads published FAQs from Supabase; falls back to the static seed list. */
 export async function getPublishedFaqs(): Promise<Faq[]> {
-  const supabase = await getSupabaseServerClient()
+  const supabase = getSupabasePublicClient()
   if (!supabase) return faqs.filter((f) => f.published)
 
   const { data, error } = await supabase

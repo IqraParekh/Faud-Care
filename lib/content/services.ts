@@ -1,4 +1,4 @@
-import { getSupabaseServerClient, getSupabasePublicClient } from '@/lib/supabase/server'
+import { getSupabasePublicClient } from '@/lib/supabase/server'
 
 export type Service = {
   slug: string
@@ -310,7 +310,7 @@ function rowToService(row: ServiceRow): Service {
 
 /** Reads published services from Supabase; falls back to the static seed list. */
 export async function getPublishedServices(): Promise<Service[]> {
-  const supabase = await getSupabaseServerClient()
+  const supabase = getSupabasePublicClient()
   if (!supabase) return services.filter((s) => s.published)
 
   const { data, error } = await supabase
@@ -324,7 +324,7 @@ export async function getPublishedServices(): Promise<Service[]> {
 }
 
 export async function getService(slug: string): Promise<Service | undefined> {
-  const supabase = await getSupabaseServerClient()
+  const supabase = getSupabasePublicClient()
   if (!supabase) return services.find((s) => s.slug === slug && s.published)
 
   const { data, error } = await supabase

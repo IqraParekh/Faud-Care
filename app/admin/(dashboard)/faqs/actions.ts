@@ -15,6 +15,8 @@ function slugify(value: string) {
 async function requireClient() {
   const supabase = await getSupabaseServerClient()
   if (!supabase) throw new Error('Supabase is not configured.')
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authorised.')
   return supabase
 }
 

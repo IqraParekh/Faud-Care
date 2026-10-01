@@ -4,6 +4,9 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { FloatingWhatsApp } from '@/components/floating-whatsapp'
 
+// Public pages are static + revalidated hourly (and on every admin edit via revalidatePath).
+export const revalidate = 3600
+
 export default async function SiteLayout({
   children,
 }: Readonly<{

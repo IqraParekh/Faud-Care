@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { getSupabasePublicClient } from '@/lib/supabase/server'
 
 export type Testimonial = {
   id: string
@@ -16,7 +16,7 @@ export const testimonials: Testimonial[] = []
 
 /** Reads published testimonials from Supabase; falls back to the (empty) static list. */
 export async function getPublishedTestimonials(): Promise<Testimonial[]> {
-  const supabase = await getSupabaseServerClient()
+  const supabase = getSupabasePublicClient()
   if (!supabase) return testimonials.filter((t) => t.published)
 
   const { data, error } = await supabase

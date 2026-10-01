@@ -1,4 +1,4 @@
-import { getSupabaseServerClient, getSupabasePublicClient } from '@/lib/supabase/server'
+import { getSupabasePublicClient } from '@/lib/supabase/server'
 
 export type Counsellor = {
   slug: string
@@ -137,7 +137,7 @@ function rowToCounsellor(row: CounsellorRow): Counsellor {
 
 /** Reads published counsellors from Supabase; falls back to the static seed list. */
 export async function getPublishedCounsellors(): Promise<Counsellor[]> {
-  const supabase = await getSupabaseServerClient()
+  const supabase = getSupabasePublicClient()
   if (!supabase) return counsellors.filter((c) => c.published)
 
   const { data, error } = await supabase
@@ -151,7 +151,7 @@ export async function getPublishedCounsellors(): Promise<Counsellor[]> {
 }
 
 export async function getCounsellor(slug: string): Promise<Counsellor | undefined> {
-  const supabase = await getSupabaseServerClient()
+  const supabase = getSupabasePublicClient()
   if (!supabase) return counsellors.find((c) => c.slug === slug && c.published)
 
   const { data, error } = await supabase

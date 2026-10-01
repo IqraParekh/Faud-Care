@@ -1,61 +1,67 @@
 import Link from 'next/link'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { SubmitButton } from '@/components/admin/admin-fields'
+import { deleteCounsellor } from './actions'
 
-const sections = [
-  { table: 'services', href: '/admin/services', label: 'Services' },
-  { table: 'counsellors', href: '/admin/counsellors', label: 'Counsellors' },
-  { table: 'testimonials', href: '/admin/testimonials', label: 'Testimonials' },
-  { table: 'faqs', href: '/admin/faqs', label: 'FAQs' },
-] as const
-
-export default async function AdminDashboardPage() {
+export default async function AdminCounsellorsPage() {
   const supabase = await getSupabaseServerClient()
+  const { data } = supabase
+    ? await supabase.from('counsellors').select('*').order('sort_order', { ascending: true })
+    : { data: [] }
 
-  const counts = await Promise.all(
-    sections.map(async (s) => {
-      if (!supabase) return { ...s, total: 0, published: 0 }
-      const [all, live] = await Promise.all([
-        supabase.from(s.table).select('*', { count: 'exact', head: true }),
-        supabase
-          .from(s.table)
-          .select('*', { count: 'exact', head: true })
-          .eq('published', true),
-      ])
-      return { ...s, total: all.count ?? 0, published: live.count ?? 0 }
-    }),
-  )
+  const counsellors = data ?? []
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-heading text-2xl text-navy">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Manage the content shown on the public site.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-heading text-2xl text-navy">Counsellors</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Profiles shown on the homepage and the counsellors page.
+          </p>
+        </div>
+        <Link
+          href="/admin/counsellors/new"
+          className="rounded-lg bg-sage px-4 py-2 text-sm font-medium text-ivory hover:bg-sage/90"
+        >
+          Add counsellor
+        </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {counts.map((c) => (
-          <Link
-            key={c.table}
-            href={c.href}
-            className="rounded-2xl border border-border bg-card p-5 transition-colors hover:bg-muted"
+      <div className="flex flex-col gap-3">
+        {counsellors.map((c) => (
+          <div
+            key={c.slug}
+            className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-start sm:justify-between"
           >
-            <p className="text-sm font-medium text-navy">{c.label}</p>
-            <p className="mt-2 text-3xl font-semibold text-navy">{c.total}</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {c.published} published · {c.total - c.published} draft
-            </p>
-          </Link>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-navy">{c.name}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{c.title}</p>
+              <span
+                className={`mt-2 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                  c.published ? 'bg-sage/15 text-sage' : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                {c.published ? 'Published' : 'Draft'}
+              </span>
+            </div>
+            <div className="flex shrink-0 gap-2">
+              <Link
+                href={`/admin/counsellors/${c.slug}`}
+                className="rounded-lg border border-border px-3 py-1.5 text-sm text-navy hover:bg-muted"
+              >
+                Edit
+              </Link>
+              <form action={deleteCounsellor}>
+                <input type="hidden" name="slug" value={c.slug} />
+                <SubmitButton variant="destructive" className="px-3 py-1.5">
+                  Delete
+                </SubmitButton>
+              </form>
+            </div>
+          </div>
         ))}
       </div>
-
-      <Link
-        href="/admin/settings"
-        className="rounded-2xl border border-border bg-card p-5 text-sm text-navy transition-colors hover:bg-muted"
-      >
-        Site settings — booking link, WhatsApp number, contact details
-      </Link>
     </div>
   )
 }

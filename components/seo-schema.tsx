@@ -5,7 +5,7 @@ function JsonLd({ data }: { data: Record<string, unknown> }) {
     <script
       type="application/ld+json"
       // JSON-LD is trusted, generated from our own config.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
     />
   )
 }
@@ -21,6 +21,7 @@ export function OrganizationSchema() {
         description: siteConfig.description,
         slogan: siteConfig.tagline,
         email: siteConfig.contact.email,
+        logo: `${siteConfig.url}/icon.svg`,
       }}
     />
   )

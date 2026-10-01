@@ -1,47 +1,40 @@
-# FUAD Care — Hostinger Deployment Guide
+# FUAD Care — Hostinger + GitHub + Google SEO guide
 
-## Zaroori baat
-Ye Next.js app + Supabase admin hai, isko **Node.js** chahiye.
-Hostinger par ye **Business Web Hosting / Cloud** plan ke "Node.js Web App" se chalta hai
-(basic Single/Premium shared plan par Node.js nahi chalta — wahan sirf static HTML chalta hai).
-VPS ho to bhi chalega.
+Node.js chahiye: Hostinger **Business Web Hosting / Cloud** ka "Node.js Web App" (ya VPS). Basic shared plan par ye nahi chalta.
 
-## Pehle kya galat tha (fix ho chuka)
-1. `generateStaticParams()` ke andar `cookies()` use ho raha tha → Supabase keys ke sath **build fail**. Fix: cookie-free public client.
-2. Zip me Windows ka `node_modules` + `.next` tha → Linux server par crash (lightningcss / swc / oxide). Ab zip me ye hain hi nahi.
-3. `@vercel/analytics` Hostinger par bekaar tha → hata diya.
-4. `/contact` aur `/privacy` links 404 de rahe the → pages bana diye.
-5. `sitemap.xml` / `robots.txt` the hi nahi → add (dynamic, admin se add hui services/counsellors khud aa jayengi).
+## 1. GitHub par push (pehli dafa)
+```bash
+git init && git add . && git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/<user>/<repo>.git
+git push -u origin main
+```
+`.env` aur `node_modules` / `.next` `.gitignore` mein hain — push nahi honge. (Agar `.env` pehle kabhi push hui thi to Supabase keys rotate kar dein.)
 
-## Steps (Hostinger hPanel)
-1. **Websites → Add website → Node.js Apps** (ya GitHub se import).
-2. Zip upload karein (`fuad-care-hostinger.zip`) ya GitHub repo connect karein.
-3. Settings:
-   - Framework: **Next.js**
-   - Node version: **22.x** (minimum 20.9)
-   - Install: `npm install`
-   - Build: `npm run build`
-   - Start: `npm start`
-4. **Environment variables** (build se pehle):
+## 2. Hostinger (hPanel)
+1. **Websites → Add website → Node.js Apps → Import Git Repository** → repo select karein.
+2. Framework **Next.js**, Node **22.x**, Install `npm install`, Build `npm run build`, Start `npm start`.
+3. **Environment variables** (build se PEHLE):
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `NEXT_PUBLIC_SITE_URL` = `https://fuad.care`
-5. Deploy / Redeploy.
-6. Domain connect karein, **SSL (Force HTTPS)** on karein.
+4. Deploy. Har `git push` to `main` par auto-redeploy hoga.
+5. Domain connect + SSL (Force HTTPS) on.
 
-## Supabase side
-Supabase → Authentication → URL Configuration:
-- Site URL: `https://fuad.care`
-- Redirect URLs: `https://fuad.care/**`
+## 3. Supabase
+- `supabase/schema.sql` phir `supabase/seed.sql` SQL Editor mein run karein.
+- Authentication → URL Configuration: Site URL `https://fuad.care`, Redirect `https://fuad.care/**`.
+- **Authentication → Sign In / Providers → "Allow new users to sign up" OFF karein.** Warna koi bhi signup karke admin ban sakta hai (RLS "logged-in = admin" maanti hai).
+- Admin user Authentication → Users → Add user se khud banayein.
 
-## SEO checklist
-- Check: `https://fuad.care/robots.txt` aur `https://fuad.care/sitemap.xml`
-- Google Search Console me domain add karein → Sitemaps → `sitemap.xml` submit.
-- www → non-www redirect `next.config.mjs` me hai (domain `fuad.care` ke liye). Domain badle to wahan `www.fuad.care` / `https://fuad.care` badal dein.
-- `/admin` noindex hai aur robots me blocked.
+## 4. Google SEO
+1. https://search.google.com/search-console → domain add karein (DNS TXT verify).
+2. Sitemaps → `sitemap.xml` submit.
+3. URL Inspection se `https://fuad.care/` → "Request indexing".
+4. Check: `/robots.txt`, `/sitemap.xml`, view-source par `<link rel="canonical">`, og:image, JSON-LD.
+5. Admin se Settings mein contact/location/hours/social bharein (local SEO), aur har service/counsellor ki bio unique likhein.
+6. Rich Results Test se FAQ schema check karein.
 
 ## Agar build/start fail ho
-- Node version 20.9+ hai? (22 recommended)
-- 3 env variables set hain?
-- `node_modules` / `.next` upload to nahi kiye? (nahi karne)
-- Hostinger Build log me jo error aaye wo bhej dein.
+- Node 20.9+ (22 best), 3 env vars set hain?
+- Build log copy karke bhej dein.

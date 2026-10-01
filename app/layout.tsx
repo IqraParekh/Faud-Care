@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next'
+import './globals.css'
 import { Montserrat } from 'next/font/google'
 import { siteConfig } from '@/lib/site-config'
 import { PageLoader } from '@/components/page-loader'
 import { OrganizationSchema } from '@/components/seo-schema'
-import './globals.css'
+
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -35,14 +36,16 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: '/hero.png',
+        url: '/og.jpg',
+        width: 1200,
+        height: 630,
         alt: `${siteConfig.name} — ${siteConfig.tagline}`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/hero.png'],
+    images: ['/og.jpg'],
     title: `${siteConfig.name} — ${siteConfig.tagline}`,
     description: siteConfig.description,
   },
