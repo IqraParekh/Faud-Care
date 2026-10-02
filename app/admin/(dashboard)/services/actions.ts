@@ -4,6 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
+const LIST_PATH = '/admin/services'
+
+function fail(message: string): never {
+  redirect(`${LIST_PATH}?error=${encodeURIComponent(message)}`)
+}
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -21,9 +27,9 @@ function linesToArray(value: FormDataEntryValue | null) {
 
 async function requireClient() {
   const supabase = await getSupabaseServerClient()
-  if (!supabase) throw new Error('Supabase is not configured.')
+  if (!supabase) fail('Supabase is not configured (check environment variables).')
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Not authorised.')
+  if (!user) redirect('/admin/login')
   return supabase
 }
 
@@ -49,29 +55,33 @@ export async function createService(formData: FormData) {
   const title = String(formData.get('title') ?? '')
   const slugInput = String(formData.get('slug') ?? '')
 
-  await supabase.from('services').insert({
+  const { error } = await supabase.from('services').insert({
     slug: slugify(slugInput || title),
     ...fieldsFrom(formData),
   })
+  if (error) fail(error.message)
 
   revalidatePath('/', 'layout')
-  redirect('/admin/services')
+  redirect('/admin/services?saved=1')
 }
 
 export async function updateService(slug: string, formData: FormData) {
   const supabase = await requireClient()
 
-  await supabase.from('services').update(fieldsFrom(formData)).eq('slug', slug)
+  const { error } = await supabase.from('services').update(fieldsFrom(formData)).eq('slug', slug)
+  if (error) fail(error.message)
 
   revalidatePath('/', 'layout')
-  redirect('/admin/services')
+  redirect('/admin/services?saved=1')
 }
 
 export async function deleteService(formData: FormData) {
   const supabase = await requireClient()
   const slug = String(formData.get('slug'))
 
-  await supabase.from('services').delete().eq('slug', slug)
+  const { error } = await supabase.from('services').delete().eq('slug', slug)
+  if (error) fail(error.message)
 
   revalidatePath('/', 'layout')
+  redirect(LIST_PATH + '?saved=1')
 }

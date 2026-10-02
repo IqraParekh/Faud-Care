@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { LogoMark } from '@/components/logo'
 import { SignOutButton } from './sign-out-button'
+import { AdminFlash } from './flash'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard' },
@@ -29,7 +30,7 @@ export function AdminShell({
       <div className="flex min-h-dvh flex-col md:flex-row">
         <aside className="flex shrink-0 flex-col gap-6 border-b border-border bg-navy px-5 py-6 text-ivory md:w-60 md:border-b-0 md:border-r">
           <Link href="/admin" className="inline-flex items-center gap-2">
-            <LogoMark height={26} tone="ivory" />
+            <LogoMark height={20} tone="ivory" />
             <span className="text-xs font-medium uppercase tracking-[0.2em] text-ivory/60">
               Admin
             </span>
@@ -53,7 +54,10 @@ export function AdminShell({
           </div>
         </aside>
         <main id="admin-main" className="flex-1 px-5 py-8 sm:px-8 md:py-10">
-          <div className="mx-auto max-w-4xl">{children}</div>
+          <div className="mx-auto max-w-4xl">
+            <AdminFlash />
+            {children}
+          </div>
         </main>
       </div>
     </div>

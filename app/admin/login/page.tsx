@@ -15,7 +15,7 @@ export default async function AdminLoginPage() {
     <div className="flex min-h-dvh items-center justify-center bg-secondary/30 px-5 py-12">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-sm">
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <LogoMark height={30} />
+          <LogoMark height={24} />
           <h1 className="font-heading text-xl text-navy">Admin</h1>
         </div>
 

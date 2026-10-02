@@ -43,7 +43,7 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex h-18 max-w-6xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
-        <LogoLink height={30} priority />
+        <LogoLink height={20} priority />
 
         <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
           {mainNav.map((item) => {
