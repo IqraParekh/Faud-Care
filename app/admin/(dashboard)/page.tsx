@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import { SubmitButton } from '@/components/admin/admin-fields'
-import { deleteCounsellor } from './actions'
+import { deleteCounsellor } from './counsellors/actions'
 
 export default async function AdminCounsellorsPage() {
   const supabase = await getSupabaseServerClient()
